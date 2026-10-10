@@ -1,0 +1,9 @@
+{
+  "name": "naming-is-hard",
+  "description": "Names a person understands on first read: a rule Claude follows while it names commands, settings, flags, and other parts of software, and two reviews, one for names experts read and one for names users see.",
+  "author": {
+    "name": "DaftDoki"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/daftdoki/dokidlc-skill-naming-is-hard"
+}
