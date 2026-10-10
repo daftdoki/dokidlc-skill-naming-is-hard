@@ -1,0 +1,19 @@
+[
+  {"old": "iirc doubt", "does": "Checks each page's cited files and approved check command, then prints the suspect pages, strongest evidence first."},
+  {"old": "iirc cost", "does": "Prints the size in bytes and approximate tokens of index.md, a sample search, and all pages: what iirc adds to a session's context."},
+  {"old": "iirc knobs", "does": "Prints the current embedding model's two distance thresholds that decide which pages get suggested, with defaults and ranges."},
+  {"old": "iirc knobs set NAME VALUE", "does": "Range-checks one of those suggestion thresholds and writes it to the config."},
+  {"old": "/iirc open", "does": "Unfolds the latest row of suggested pages on screen, as clicking [+] does."},
+  {"old": "/iirc status-line [on|off]", "does": "Shows or hides the line under the prompt that sums up the session; bare, prints whether it is on."},
+  {"old": "max-suggested [N]", "does": "Prints or sets how many pages one suggestion names at most (1 to 10)."},
+  {"old": "iirc setup", "does": "Writes the search backend (embedding host and model, CPU model, or substring search) to the machine config."},
+  {"old": "iirc stats", "does": "Reads the usage log for N days and prints sessions, searches, reads after a suggestion, writes, and verifies."},
+  {"old": "iirc index", "does": "Re-embeds every page, stamps each store's index.md, and commits each store."},
+  {"old": "--vectors (flag of iirc index)", "does": "Re-embeds the pages only: no stamp and no commit."},
+  {"old": "iirc tune", "does": "Command group whose four steps tune which pages get suggested."},
+  {"old": "tune gather", "does": "Writes one evidence file per untuned session, for the judgment step that follows; it calls no model."},
+  {"old": "tune judge", "does": "Checks relevance judgments read from stdin and appends them all, or none, to the judgments file."},
+  {"old": "tune sweep", "does": "Counts judged pairs that pass at the current thresholds and at a grid of other values, and prints the result."},
+  {"old": "tune done", "does": "Logs a row marking a session tuned, so gather skips it from then on."},
+  {"old": "iirc recall", "does": "Hook entry: reads the hook's JSON, searches with the prompt or a failed command's error, and prints one line naming the matching pages."}
+]
