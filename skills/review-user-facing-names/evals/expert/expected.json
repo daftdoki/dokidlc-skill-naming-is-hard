@@ -1,0 +1,5 @@
+{
+  "audience": "expert",
+  "bad": ["tidy-database", "snapshot", "--fast", "--kill", "stats", "replica-lag-check-run-now-and-report", "zap-idle", "diag", "slow-ms", "set-max-conns"],
+  "good": ["vacuum-table", "reindex-table", "promote-replica", "estimate-table-bloat", "list-blocking-locks", "terminate-backend", "wal-keep-size", "statement-timeout", "--analyze", "--concurrently"]
+}

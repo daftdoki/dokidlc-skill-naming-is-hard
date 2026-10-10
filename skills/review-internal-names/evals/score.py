@@ -3,9 +3,11 @@
     score.py EXPECTED RESULT_JSON WORK_DIR
 
 A name counts as flagged when it is the first code span in the first
-cell of a row of the report's findings table. Names are compared after
-dropping a module prefix, call parentheses, a leading "--", and an
-"=value", with "-" and "_" treated as one and case ignored. The run
+cell of a row of the report's findings table. A span of several words
+counts as its flag, or else its last word that is not a placeholder.
+Names are compared after dropping a module prefix, call parentheses, a
+leading "--", and an "=value", with "-" and "_" treated as one and case
+ignored. The run
 passes with at least 8 of 10 bad names flagged, at most 2 of 10 good
 ones, a last line that offers to apply the renames, an untouched work
 directory, and, when EXPECTED names an audience, that audience named in
@@ -19,9 +21,17 @@ import sys
 
 
 def norm(name: str) -> str:
-    name = name.strip().split("=")[0].strip()
+    tokens = name.split()
+    if len(tokens) > 1:
+        # "pantry gc", "list --nuke", "rate-recipe RECIPE STARS": keep the
+        # flag if there is one, else the last word that is not a placeholder.
+        tokens = [t for t in tokens if not re.match(r"^([A-Z_]+|<.*>|\[.*\])$", t)] or tokens
+        flags = [t for t in tokens if t.startswith("--")]
+        tokens = flags or tokens[-1:]
+    name = tokens[0] if tokens else ""
+    name = name.split("=")[0]
     name = re.sub(r"\(.*\)$", "", name).lstrip("-")
-    name = name.split(" ")[0].split(".")[-1]
+    name = name.split(".")[-1]
     return name.replace("-", "_").lower()
 
 
