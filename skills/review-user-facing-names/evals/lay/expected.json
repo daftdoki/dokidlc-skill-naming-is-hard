@@ -1,0 +1,5 @@
+{
+  "audience": "lay",
+  "bad": ["reindex", "gc", "sync", "--nuke", "info", "recipe-ingredient-quantity-unit-convert", "munge", "set-dark-mode", "scaling-coeff", "cron"],
+  "good": ["add-recipe", "find-recipes", "show-recipe", "delete-recipe", "make-shopping-list", "import-recipes", "rate-recipe", "font-size", "measurement-units", "--with-photos"]
+}
