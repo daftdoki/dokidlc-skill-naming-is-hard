@@ -1,0 +1,4 @@
+{
+  "bad": ["handle_data", "sweep_items", "FeedManager", "info", "data2", "MAX", "diagnostics", "feed", "cache", "purge"],
+  "good": ["fetch_feed", "mark_entry_read", "retention_days", "FeedSource", "published_at", "entry_id", "list_subscribed_feeds", "USER_AGENT", "normalize_feed_url", "http_timeout_seconds"]
+}
