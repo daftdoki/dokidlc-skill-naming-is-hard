@@ -19,6 +19,3 @@ When the user typed `/naming-is-hard DESCRIPTION`, the DESCRIPTION says what nee
 
 The work is done when every name passes all four checks and every row cites a section.
 
-## Product and skill names
-
-A product's, plugin's, or skill's own name may be playful: a backup product can be called `squirrel`. Every name a person types or reads to get work done inside it stays plain and follows the rule: `squirrel restore-snapshot`, not `squirrel dig-up`.

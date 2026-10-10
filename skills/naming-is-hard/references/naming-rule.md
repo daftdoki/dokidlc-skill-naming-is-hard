@@ -50,6 +50,22 @@ The examples come from `bak`, a backup tool.
 - The head noun names what the thing contains, not what it is for:
   `job-logs`, not `diagnostics`.
 
+## Outside a command line
+
+The rule applies to every name a person reads, through these mappings.
+
+- **In code:** a function or method is a command, so "the code VERBs
+  OBJECT" is a true sentence and its verb follows the three cases in The
+  shape. A parameter is a flag: one that changes what the function
+  does, not just how much, is its own function. A variable, constant,
+  attribute, field, or config key is an object or a setting. A class
+  is an object that names the kind of thing each instance is; a suffix
+  that names no kind (`Manager`, `Handler`, `Helper`, `Data`, `Info`)
+  fails The object: `JobManager` becomes `JobQueue` or `JobScheduler`,
+  whichever the class is.
+- **In an interface:** a button or menu item is a command. A label on a
+  value, or a toggle, is a setting.
+
 ## The words
 
 - One role per word: a word that is a noun in one name is a noun in
@@ -57,8 +73,11 @@ The examples come from `bak`, a backup tool.
   be the verb in `restore-snapshot` while "restored" modifies
   `show-restored-files`. One form doing two jobs is what fails.
 - Name for the audience of the surface. A setting or command a person
-  types uses the word that person knows (`retention-limit`); a report
-  for an engineer may use the field's term (`max-chunk-entropy`).
+  outside the field types uses the word that person knows
+  (`retention-limit`), even when the field has a more exact term. A
+  name experts read uses the field's term (`max-chunk-entropy`): a plain
+  or invented word that hides a term they know fails, the same as jargon
+  fails a newcomer.
 - A word's meanings include the ones it already has in the field. In
   backups, "differential" names a kind of backup, so `differential` is
   taken before the project uses it for anything else.
@@ -69,6 +88,13 @@ The examples come from `bak`, a backup tool.
 - When a word fails, the interface wins: rename to the word the person
   already sees on screen and in the output, and change the internal
   names to match.
+
+## Product names
+
+A product's, plugin's, or skill's own name may be playful: a backup
+product can be called `squirrel`. Every name a person types or reads to
+get work done inside it follows the rest of this rule:
+`squirrel restore-snapshot`, not `squirrel dig-up`.
 
 ## Done when
 
