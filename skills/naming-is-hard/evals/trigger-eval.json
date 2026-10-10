@@ -1,0 +1,22 @@
+[
+  {"query": "i'm adding a subcommand to our deploy cli (python, click) that rolls back the last release on one environment. what should i call it? right now the commands are `deploy push`, `deploy status`, `deploy logs`", "should_trigger": true},
+  {"query": "Our CLI tool `ledger` has a command called `zap` that deletes cached exchange rates older than 30 days. Nobody knows what it does from the name. Suggest a better name and update cli.py and the docs to match.", "should_trigger": true},
+  {"query": "I need a config key in settings.toml for how many days we keep uploaded thumbnails before the cleanup job removes them. Help me pick the key name and add it to config.py with a default of 14.", "should_trigger": true},
+  {"query": "can you come up with names for the flags on our `export` command? one makes it skip attachments, one writes json instead of csv, and one only exports rows changed since a given date", "should_trigger": true},
+  {"query": "We're building a Claude Code plugin with three slash commands: one shows the open tickets assigned to me, one closes a ticket with a comment, one syncs tickets from Jira. Propose the command names before I write the handlers.", "should_trigger": true},
+  {"query": "Go through src/cli/commands/ and tell me which command names are confusing, then propose clearer ones. Users keep running `refresh` when they mean `reindex`.", "should_trigger": true},
+  {"query": "our backup tool has a setting `verbose_mode` with values 0 1 2 3 and also a `--quiet` flag and a `--chatty` flag, it's a mess. propose a cleaner set of names for these and tell me which to keep", "should_trigger": true},
+  {"query": "Add a new command to scripts/manage.py that recomputes every user's storage quota from the files table and writes it back. Pick a good name for it, then implement it.", "should_trigger": true},
+  {"query": "I'm writing a Rust CLI for managing dotfiles. Suggest names for its commands: link files into home, show which files are linked, remove broken links, and add a new file to the repo.", "should_trigger": true},
+  {"query": "the env var we use to turn on the experimental parser is called `XP_ON`. rename it to something people will understand and update the code and the README", "should_trigger": true},
+  {"query": "Write a commit message for the staged changes: I fixed the off-by-one in the pagination of `list-invoices`.", "should_trigger": false},
+  {"query": "The `sync-orders` command crashes with a KeyError when the API returns an order with no customer. Find the bug in commands/sync_orders.py and fix it.", "should_trigger": false},
+  {"query": "Write the --help text for our existing `prune-old-builds` command. It takes --keep N and --dry-run.", "should_trigger": false},
+  {"query": "help me brainstorm a name for my bakery, it's in a converted train station in Portland and we do sourdough mostly", "should_trigger": false},
+  {"query": "Write a bash script that renames every photo in ~/Pictures/2024 to its EXIF date, like 2024-03-01_142233.jpg.", "should_trigger": false},
+  {"query": "What does the `--onto` flag of `git rebase` do? Give me an example with three branches.", "should_trigger": false},
+  {"query": "Implement the `--dry-run` flag for the `migrate-db` command so it prints the SQL it would run without executing it.", "should_trigger": false},
+  {"query": "Translate the error messages in locales/en.json into German and put them in locales/de.json.", "should_trigger": false},
+  {"query": "Convert our CLI from argparse to click. Keep every command and flag name exactly as it is.", "should_trigger": false},
+  {"query": "Review the README for typos and broken links and fix what you find.", "should_trigger": false}
+]
