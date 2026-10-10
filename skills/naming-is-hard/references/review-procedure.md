@@ -24,8 +24,9 @@ formatting, "could be shorter", or a preferred synonym are findings
 only through a failed check.
 
 For each failure, write the rename that passes all four checks, and
-name the rule section that decided it by its heading (The shape, The
-object, The words, Product names, Done when).
+name the rule section that decided it by its heading (Existing terms
+first, The shape, The object, Outside a command line, The words,
+Product names, Done when).
 
 ## Report
 

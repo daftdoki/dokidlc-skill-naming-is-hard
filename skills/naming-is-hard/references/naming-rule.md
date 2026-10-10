@@ -6,6 +6,21 @@ so that sentence is true and plain.
 
 The examples come from `bak`, a backup tool.
 
+## Existing terms first
+
+Before you build any name, check each word the project already uses for
+the thing against The words: the meanings it has in the field, and its
+role in the project's other names. A term that passes earns its keep:
+every new name uses it, with its spelling. A term that fails is renamed
+first, everywhere at once, in every name and every document, and the
+new names are built from its replacement.
+
+`bak` used "archive" as a verb (`bak archive FILES`) and as the name of
+its cold-storage tier. One word in two roles fails, so the tier became
+`cold-storage` everywhere before any command was named. Then the
+commands were built on it: `move-to-cold-storage`, not
+`move-to-archive`.
+
 ## The shape
 
 - **Command or subcommand:** a verb, then its object. The verb is what
@@ -81,10 +96,6 @@ The rule applies to every name a person reads, through these mappings.
 - A word's meanings include the ones it already has in the field. In
   backups, "differential" names a kind of backup, so `differential` is
   taken before the project uses it for anything else.
-- Use the project's existing term for a thing, and its spelling, while
-  that term passes every check. A term that fails a check is renamed
-  everywhere at once: `bak` once called its schedules "cron knobs";
-  they became `backup-schedules` in every name and every document.
 - When a word fails, the interface wins: rename to the word the person
   already sees on screen and in the output, and change the internal
   names to match.
