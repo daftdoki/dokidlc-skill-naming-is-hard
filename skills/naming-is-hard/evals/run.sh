@@ -1,6 +1,6 @@
 #!/bin/sh
 # One headless rename run, scored against the creator's iirc decisions.
-#   run.sh with_skill|without_skill OUTDIR
+#   run.sh with_skill|without_skill [OUT_DIR]
 # Exports dokidlc-iirc at 1c4bd16 into a temporary directory and runs
 # one claude -p session there on task.md. Both arms use
 # --setting-sources "", so no user plugins, settings, or CLAUDE.md reach
@@ -9,13 +9,15 @@
 # --plugin-dir, and the prompt names the copied SKILL.md, because a
 # headless session does not load a skill on its own. The session never
 # sees answer-key.md. Writes stream.jsonl, report.md, and score.txt to
-# OUTDIR, then prints the score line.
+# OUT_DIR (default: a new temporary directory, kept), then prints the
+# score line.
 # Env: IIRC_REPO (a dokidlc-iirc clone, default ~/Code/agents/dokidlc-iirc),
 # MODEL (default claude-opus-5-5).
 set -eu
 E=$(cd "$(dirname "$0")" && pwd)
 PLUGIN=$(cd "$E/../../.." && pwd)
-arm=$1; out=$2
+usage="usage: run.sh with_skill|without_skill [OUT_DIR]"
+arm=${1:?$usage}; out=${2:-$(mktemp -d)}
 IIRC_REPO=${IIRC_REPO:-$HOME/Code/agents/dokidlc-iirc}
 MODEL=${MODEL:-claude-opus-5-5}
 COMMIT=1c4bd16
@@ -40,7 +42,7 @@ case "$arm" in
 
 $prompt" ;;
   without_skill) ;;
-  *) echo "arm must be with_skill or without_skill" >&2; exit 2 ;;
+  *) echo "$usage" >&2; exit 2 ;;
 esac
 
 # The parent shell may carry installed plugin bin directories on PATH.
@@ -82,4 +84,5 @@ for o in outside:
 PY
 
 python3 "$E/score.py" "$out/report.md" > "$out/score.txt" || true
-tail -1 "$out/score.txt"
+tail -2 "$out/score.txt"
+echo "output: $out"
