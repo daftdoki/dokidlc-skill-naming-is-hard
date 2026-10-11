@@ -8,7 +8,7 @@ argument-hint: "[DESCRIPTION]"
 
 The rule is in [references/naming-rule.md](references/naming-rule.md). Read all of it before you propose the first name. Every name you make answers to every section.
 
-When the user typed `/naming-is-hard DESCRIPTION`, the DESCRIPTION says what needs names. Without one, name what the current task is creating or renaming.
+When the user typed `/naming-is-hard:naming-is-hard DESCRIPTION` (or the short `/naming-is-hard DESCRIPTION`), the DESCRIPTION says what needs names. Without one, name what the current task is creating or renaming.
 
 ## Steps
 
