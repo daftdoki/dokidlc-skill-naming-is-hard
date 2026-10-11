@@ -23,7 +23,7 @@ name, parent command, or argument).
 Prints one line per item, then the exact, acceptable, and format lines.
 Exit 2 when the report has no table rows; 3 when a judge call fails or
 its answer is malformed or misses an item, with no score; 1 when the
-format check fails or fewer than BAR (14) items are acceptable.
+format check fails or fewer than BAR (13) items are acceptable.
 """
 import json
 import os
@@ -39,7 +39,7 @@ sys.path.insert(0, str(HERE.parents[2] / "evals"))
 from tables import SPAN, bare_name, table_rows  # noqa: E402
 
 ITEMS = 17
-BAR = 14
+BAR = 13
 VOTES = 3
 RULE = HERE.parent / "references" / "naming-rule.md"
 JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "claude-fable-5-1")

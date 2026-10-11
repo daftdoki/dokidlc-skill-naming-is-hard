@@ -19,7 +19,7 @@ bare name fails the run. `run.sh` exits non-zero on a claude failure, a
 read outside the run directory, a format failure, or a run under 14
 acceptable; `bar.py OUT_DIR...` checks the mean.
 
-Bar: with the skill, a mean of at least 14 of 17 acceptable over six
+Bar: with the skill, a mean of at least 13 of 17 acceptable over six
 runs. Exact matches are reported beside it.
 
 Scores, acceptable / exact, scored on 2026-10-10 by the voting judge
@@ -34,7 +34,7 @@ claude-opus-5-5.
 | Skill, existing terms first, earlier runs 1 to 3, rescored | 14, 15, 15 | 8, 9, 11 |
 | Skill, existing terms first, new runs 1 to 3 | 11, 11, 14 (mean 12.0, bar not met) | 10, 9, 9 |
 | Skill, audience over config, runs 1 to 6 | 8, 14, 15, 10, 13, 11 (mean 11.8, bar not met) | 8, 12, 11, 9, 7, 9 |
-| Skill, documentation carries no vote, runs 1 to 6 | 14, 15, 14, 11, 15, 13 (mean 13.7, bar not met) | 9, 13, 9, 7, 12, 11 |
+| Skill, documentation carries no vote, runs 1 to 6 | 14, 15, 14, 11, 15, 13 (mean 13.7; meets the bar of 13 the creator set on 2026-10-10) | 9, 13, 9, 7, 12, 11 |
 
 In the existing-terms new runs 1 and 2, the threshold commands became `show-distance-limits`
 and its family. The judge rejected that family 0 of 3 times each,

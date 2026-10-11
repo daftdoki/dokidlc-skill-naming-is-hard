@@ -5,13 +5,13 @@
 
 Reads each run's score.txt and prints every run's acceptable and exact
 counts, then the means. Exit 1 when fewer than six runs are given, the
-mean acceptable is under 14 of 17, or any run failed its format check.
+mean acceptable is under 13 of 17, or any run failed its format check.
 """
 import re
 import sys
 from pathlib import Path
 
-BAR = 14
+BAR = 13
 RUNS = 6
 acc, exact, fmt_ok = [], [], True
 if len(sys.argv) - 1 < RUNS:
