@@ -9,20 +9,21 @@ ANSWER_KEY defaults to answer-key.md beside this script; only its rows
 1 to 17 count.
 
 Exact: the New cell is one code span whose text equals the key's.
-Acceptable: an exact match, or a name the judge accepts. The judge is one
-headless `claude -p` call (JUDGE_MODEL, default claude-fable-5-1) that
-gets naming-rule.md, and for each item what it does (items.json), the
+Acceptable: an exact match, or a name that at least two of three judge
+calls accept. Each call is a separate headless `claude -p` (JUDGE_MODEL,
+default claude-fable-5-1) that gets naming-rule.md, and for each item what it does (items.json), the
 creator's name, and the proposed name. It never sees which run or arm
 made the names. It answers per item whether the name passes the rule's
 four Done when checks and whether a newcomer would read it the same way
-as the creator's name; acceptable means yes to both.
+as the creator's name; a call accepts on yes (JSON true) to both.
 
 Format: every New cell is one code span holding a bare name (no program
 name, parent command, or argument).
 
 Prints one line per item, then the exact, acceptable, and format lines.
-Exit 2 when the report has no table rows; 1 when the format check fails
-or fewer than BAR (14) items are acceptable.
+Exit 2 when the report has no table rows; 3 when a judge call fails or
+its answer is malformed or misses an item, with no score; 1 when the
+format check fails or fewer than BAR (14) items are acceptable.
 """
 import json
 import os
@@ -30,6 +31,7 @@ import re
 import subprocess
 import sys
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -38,6 +40,7 @@ from tables import SPAN, bare_name, table_rows  # noqa: E402
 
 ITEMS = 17
 BAR = 14
+VOTES = 3
 RULE = HERE.parent / "references" / "naming-rule.md"
 JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "claude-fable-5-1")
 
@@ -72,8 +75,56 @@ def new_names(text):
     return found
 
 
+class JudgeError(Exception):
+    pass
+
+
+def parse_answer(text, wanted):
+    """Return {n: (ok, reason)} for every n in wanted, or raise JudgeError."""
+    fenced = re.search(r"```(?:json)?\s*\n(.*?)```", text, re.S)
+    if fenced:
+        body = fenced.group(1)
+    elif "[{" in text:
+        body = text[text.index("[{"):]
+    else:
+        raise JudgeError("no JSON array in the reply")
+    try:
+        answers, _ = json.JSONDecoder().raw_decode(body.strip())
+    except ValueError as err:
+        raise JudgeError(f"reply is not JSON: {err}")
+    if not isinstance(answers, list):
+        raise JudgeError("reply is not a JSON array")
+    out = {}
+    for a in answers:
+        if not isinstance(a, dict) or not isinstance(a.get("n"), int):
+            raise JudgeError(f"malformed answer: {a!r}")
+        rule, reading = a.get("passes_rule") is True, a.get("same_reading") is True
+        why = f"rule {'yes' if rule else 'no'}, reading {'yes' if reading else 'no'}: {a.get('reason', '')}"
+        out[a["n"]] = (rule and reading, why)
+    missing = sorted(set(wanted) - set(out))
+    if missing:
+        raise JudgeError(f"no answer for items {missing}")
+    return {n: out[n] for n in wanted}
+
+
+def ask_judge(prompt, wanted):
+    with tempfile.TemporaryDirectory() as tmp:
+        run = subprocess.run(
+            ["claude", "-p", "--setting-sources", "", "--strict-mcp-config", "--tools", "",
+             "--model", JUDGE_MODEL, "--output-format", "json", prompt],
+            cwd=tmp, stdin=subprocess.DEVNULL, capture_output=True, text=True)
+    try:
+        result = json.loads(run.stdout)
+        text = result.get("result") or ""
+    except (ValueError, AttributeError) as err:
+        raise JudgeError(f"claude gave no JSON ({err}); stderr: {run.stderr[-300:]}")
+    if run.returncode != 0 or result.get("is_error"):
+        raise JudgeError(f"claude failed ({run.returncode}): {text[:300]}")
+    return parse_answer(text, wanted)
+
+
 def judge(asks, all_names):
-    """Ask the judge about each (n, item, creator, proposed); return {n: (ok, reason)}."""
+    """Ask the judge VOTES times; return {n: (votes for, reason)}."""
     if not asks:
         return {}
     items = "\n".join(json.dumps({"n": n, "current": it["old"], "does": it["does"],
@@ -81,22 +132,13 @@ def judge(asks, all_names):
                       for n, it, want, have in asks)
     prompt = JUDGE_PROMPT.format(rule=RULE.read_text(), all_names=", ".join(all_names),
                                  items=items)
-    with tempfile.TemporaryDirectory() as tmp:
-        run = subprocess.run(
-            ["claude", "-p", "--setting-sources", "", "--strict-mcp-config", "--tools", "",
-             "--model", JUDGE_MODEL, "--output-format", "json", prompt],
-            cwd=tmp, stdin=subprocess.DEVNULL, capture_output=True, text=True)
-    try:
-        text = json.loads(run.stdout).get("result") or ""
-        answers = json.loads(re.search(r"\[.*\]", text, re.S).group(0))
-    except (ValueError, AttributeError) as err:
-        print(f"judge: no JSON answer ({err}); stderr: {run.stderr[-300:]}", file=sys.stderr)
-        sys.exit(3)
+    wanted = [n for n, *_ in asks]
+    with ThreadPoolExecutor(VOTES) as pool:
+        calls = list(pool.map(lambda _: ask_judge(prompt, wanted), range(VOTES)))
     out = {}
-    for a in answers:
-        ok = bool(a.get("passes_rule")) and bool(a.get("same_reading"))
-        why = f"rule {'yes' if a.get('passes_rule') else 'no'}, reading {'yes' if a.get('same_reading') else 'no'}: {a.get('reason', '')}"
-        out[int(a["n"])] = (ok, why)
+    for n in wanted:
+        votes = sum(c[n][0] for c in calls)
+        out[n] = (votes, " | ".join(c[n][1] for c in calls))
     return out
 
 
@@ -122,7 +164,11 @@ def main():
     exact = {n for n in names if names[n] == key[n]}
     asks = [(n, items[n - 1], key[n], names[n]) for n in sorted(names)
             if names[n] and n not in exact]
-    verdicts = judge(asks, [names[n] for n in sorted(names) if names[n]])
+    try:
+        verdicts = judge(asks, [names[n] for n in sorted(names) if names[n]])
+    except JudgeError as err:
+        print(f"judge: {err}; no score", file=sys.stderr)
+        sys.exit(3)
 
     acceptable = 0
     for n in range(1, ITEMS + 1):
@@ -131,7 +177,9 @@ def main():
         elif not names[n]:
             ok, why = False, "missing"
         else:
-            ok, why = verdicts.get(n, (False, "judge gave no answer"))
+            votes, why = verdicts[n]
+            ok = votes * 2 > VOTES
+            why = f"{votes}/{VOTES} accept: {why}"
         acceptable += ok
         mark = "=" if n in exact else ("+" if ok else "x")
         print(f"{n:2} {mark} {names[n] or '(missing)':36} key: {key[n]:32} {why}")

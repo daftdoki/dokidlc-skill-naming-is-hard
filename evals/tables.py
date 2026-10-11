@@ -17,17 +17,18 @@ def split_cells(line):
 def table_rows(text):
     """Return the cells of every body row of every table in text.
 
-    A header row, the one right above a separator row, is left out, and
-    so is the separator.
+    A table is a run of lines that start with "|". Its body rows are the
+    ones below its separator line; a run with no separator is no table.
     """
-    lines = [l.strip() for l in text.splitlines()]
-    rows = []
-    for i, line in enumerate(lines):
-        if not line.startswith("|") or SEPARATOR.match(line):
+    rows, block = [], []
+    for line in [l.strip() for l in text.splitlines()] + [""]:
+        if line.startswith("|"):
+            block.append(line)
             continue
-        if i + 1 < len(lines) and SEPARATOR.match(lines[i + 1]) and "-" in lines[i + 1]:
-            continue
-        rows.append(split_cells(line))
+        seps = [i for i, l in enumerate(block) if SEPARATOR.match(l) and "-" in l]
+        if seps:
+            rows += [split_cells(l) for l in block[seps[0] + 1:] if not SEPARATOR.match(l)]
+        block = []
     return rows
 
 

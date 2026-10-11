@@ -13,10 +13,16 @@ from pathlib import Path
 
 BAR = 14
 acc, exact, fmt_ok = [], [], True
+if not sys.argv[1:]:
+    sys.exit("usage: bar.py OUT_DIR...")
 for d in sys.argv[1:]:
-    text = (Path(d) / "score.txt").read_text()
-    a = int(re.search(r"^acceptable: (\d+)", text, re.M).group(1))
-    e = int(re.search(r"^exact: (\d+)", text, re.M).group(1))
+    path = Path(d) / "score.txt"
+    text = path.read_text() if path.is_file() else ""
+    a = re.search(r"^acceptable: (\d+)", text, re.M)
+    e = re.search(r"^exact: (\d+)", text, re.M)
+    if not (a and e):
+        sys.exit(f"{path}: no score; the run or its judge failed")
+    a, e = int(a.group(1)), int(e.group(1))
     f = "format: ok" in text
     fmt_ok &= f
     acc.append(a)
