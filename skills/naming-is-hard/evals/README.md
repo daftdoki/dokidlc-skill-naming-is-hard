@@ -16,15 +16,15 @@ creator's name. The judge gets `naming-rule.md`, `items.json` (what each
 item does), the creator's name, and the proposed name, and never the run
 or arm. A judge failure exits 3 with no score. A New cell that is not one
 bare name fails the run. `run.sh` exits non-zero on a claude failure, a
-read outside the run directory, a format failure, or a run under 14
+read outside the run directory, a format failure, or a run under 13
 acceptable; `bar.py OUT_DIR...` checks the mean.
 
 Bar: with the skill, a mean of at least 13 of 17 acceptable over six
 runs. Exact matches are reported beside it.
 
-Scores, acceptable / exact, scored on 2026-10-10 by the voting judge
-against the rule as of "Existing terms are checked first". Runs used
-claude-opus-5-5.
+Scores, acceptable / exact, scored on 2026-10-10 by the voting judge.
+Each row names the rule it ran against by the commit that last changed
+it. Runs used claude-opus-5-5.
 
 | Run | Acceptable | Exact |
 |---|---|---|
@@ -40,8 +40,7 @@ In the existing-terms new runs 1 and 2, the threshold commands became `show-dist
 and its family. The judge rejected that family 0 of 3 times each,
 which costs three to four items at once.
 
-The last row uses the rule as of "Names people read follow the
-audience, not the config". Runs 1 and 6 kept "recall" across the
+The audience-over-config row uses the rule at 892806b. Runs 1 and 6 kept "recall" across the
 threshold and tuning commands, citing the user docs, which say "recall
 distances"; run 4 used `max-distances`. The judge rejected each family
 0 of 3 times.

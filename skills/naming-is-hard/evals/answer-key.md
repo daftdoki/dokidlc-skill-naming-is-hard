@@ -2,7 +2,7 @@
 
 For the rename eval. Each row is the creator's final name for a command,
 flag, or setting of dokidlc-iirc at 1c4bd16, before any rename. The
-first 17 rows are the items the two test runs named; run 2 matched 10.
+first 17 rows are the items the two test runs named; run 2 matched 9.
 
 | # | At 1c4bd16 | Creator's name | Kind |
 |---|---|---|---|
