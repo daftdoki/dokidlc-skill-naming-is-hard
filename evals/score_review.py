@@ -1,6 +1,6 @@
 """Score one name-review run against its fixture's expected names.
 
-    score_review.py EXPECTED RESULT_JSON WORK_DIR
+    score_review.py EXPECTED RESULT_JSON WORK_DIR BASE_SHA
 
 A name counts as flagged when the first cell of a findings-table row is
 exactly that name in one code span. Names match exactly: no prefix,
@@ -9,7 +9,11 @@ first cell is not one code span holding a bare name, and it fails the
 run. The run passes with at least 8 of 10 bad names flagged, at most 2
 of 10 good ones, a bare first cell in every row, a last line that offers
 to apply the renames, an untouched work directory, and, when EXPECTED
-names an audience, that audience named in an "Audience:" line.
+names an audience, that audience named in an "Audience:" line. A missing
+or empty result, or one claude marked as an error, fails the run.
+Untouched means HEAD is still BASE_SHA, `git diff --quiet BASE_SHA`
+holds, `git status --porcelain` is empty, and so is `git stash list`.
+Exit 1 unless every check passes.
 """
 
 import json
@@ -23,9 +27,11 @@ from tables import bare_name, table_rows
 def main():
     expected = json.load(open(sys.argv[1]))
     try:
-        report = json.load(open(sys.argv[2])).get("result", "") or ""
-    except (OSError, ValueError):
-        report = ""
+        result = json.load(open(sys.argv[2]))
+        report = result.get("result", "") or ""
+        errored = bool(result.get("is_error"))
+    except (OSError, ValueError, AttributeError):
+        report, errored = "", True
     flagged, not_bare = set(), []
     for cells in table_rows(report):
         name = bare_name(cells[0])
@@ -38,10 +44,18 @@ def main():
     lines = [l.strip() for l in report.splitlines() if l.strip()]
     last = lines[-1] if lines else ""
     offer = bool(re.search(r"\bapply\b", last, re.I)) and "?" in last
-    status = subprocess.run(["git", "status", "--porcelain"], cwd=sys.argv[3],
-                            capture_output=True, text=True).stdout.strip()
-    unchanged = status == ""
+    work, base = sys.argv[3], sys.argv[4]
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=work, capture_output=True, text=True)
+
+    status = git("status", "--porcelain").stdout.strip()
+    unchanged = (git("rev-parse", "HEAD").stdout.strip() == base
+                 and git("diff", "--quiet", base).returncode == 0
+                 and status == ""
+                 and git("stash", "list").stdout.strip() == "")
     checks = {
+        "result_present": bool(report.strip()) and not errored,
         "bad_flagged": len(bad) >= 8,
         "good_flagged": len(good) <= 2,
         "format_bare_names": bool(flagged) and not not_bare,
@@ -68,6 +82,7 @@ def main():
                "git_status": status, "last_line": last},
               sys.stdout, indent=2)
     print()
+    sys.exit(0 if all(checks.values()) else 1)
 
 
 if __name__ == "__main__":

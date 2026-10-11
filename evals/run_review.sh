@@ -8,7 +8,8 @@
 # the fixture, both in a temporary directory, so it never sees the
 # answers. The without_skill arm deletes SKILL from the plugin copy.
 # Writes result.json, stderr.log, and score.json to OUT_DIR (default: a
-# new temporary directory, kept), then prints the summary line.
+# new temporary directory, kept), then prints the summary line. Exits
+# non-zero when claude fails or any check fails.
 # Env: MODEL (default claude-opus-5-5).
 set -eu
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
@@ -34,15 +35,22 @@ esac
 cp -R "$E/$fixture" "$tmp/work"
 cd "$tmp/work"
 git init -q && git add -A && git -c user.name=eval -c user.email=eval@example.org commit -qm fixture
+base=$(git rev-parse HEAD)
 
 # The parent shell may carry installed plugin bin directories on PATH.
 path=$(printf %s "$PATH" | tr : '\n' | grep -v '/.claude/plugins/cache/' | paste -sd: -)
 PATH=$path XDG_STATE_HOME=$tmp/state claude -p --setting-sources "" --strict-mcp-config \
   --plugin-dir "$tmp/plugin" --model "$MODEL" \
-  --permission-mode acceptEdits --allowedTools "Read,Grep,Glob,Bash(git *)" --output-format json \
-  "/naming-is-hard:$skill the whole repository" \
-  < /dev/null > "$out/result.json" 2> "$out/stderr.log" || echo "claude exited $?" >> "$out/stderr.log"
+  --permission-mode acceptEdits --allowedTools "Read,Grep,Glob,Bash(git status*),Bash(git diff*)" \
+  --output-format json "/naming-is-hard:$skill the whole repository" \
+  < /dev/null > "$out/result.json" 2> "$out/stderr.log" || claude_status=$?
 
-python3 "$ROOT/evals/score_review.py" "$expected" "$out/result.json" "$tmp/work" > "$out/score.json"
-python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['summary'])" "$out/score.json"
+status=0
+python3 "$ROOT/evals/score_review.py" "$expected" "$out/result.json" "$tmp/work" "$base" > "$out/score.json" || status=$?
+python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['summary'])" "$out/score.json" || status=2
+if [ "${claude_status:-0}" -ne 0 ]; then
+  echo "claude exited $claude_status" | tee -a "$out/stderr.log"
+  status=1
+fi
 echo "output: $out"
+exit "$status"

@@ -1,7 +1,8 @@
 #!/bin/sh
 # One headless rename run, scored against the creator's iirc decisions.
-# Exits non-zero when the format check fails or the run has fewer than
-# 14 acceptable names; bar.py checks the mean over three runs.
+# Exits non-zero when claude fails, a tool call reaches outside the run
+# directory, the format check fails, or the run has fewer than 14
+# acceptable names; bar.py checks the mean over three runs.
 #   run.sh with_skill|without_skill [OUT_DIR]
 # Exports dokidlc-iirc at 1c4bd16 into a temporary directory and runs
 # one claude -p session there on task.md. Both arms use
@@ -52,11 +53,11 @@ path=$(printf %s "$PATH" | tr : '\n' | grep -v '/.claude/plugins/cache/' | paste
 
 cd "$tmp/code"
 # shellcheck disable=SC2086
-PATH=$path XDG_STATE_HOME=$tmp/state claude -p --setting-sources "" $extra \
+PATH=$path XDG_STATE_HOME=$tmp/state claude -p --setting-sources "" --strict-mcp-config $extra \
   --model "$MODEL" --allowedTools "Read,Glob,Grep" \
   --disallowedTools "Bash,Write,Edit,WebFetch,WebSearch,Agent" \
   --output-format stream-json --verbose "$prompt" \
-  < /dev/null > "$out/stream.jsonl" 2> "$out/stderr.log" || echo "claude exited $?" >> "$out/stderr.log"
+  < /dev/null > "$out/stream.jsonl" 2> "$out/stderr.log" || claude_status=$?
 
 python3 - "$out" "$arm" "$tmp" <<'PY'
 import json, sys
@@ -82,11 +83,17 @@ if arm == "with_skill" and not any(p.endswith("naming-is-hard/SKILL.md") for p i
     print("FAIL: the with_skill run never read SKILL.md", file=sys.stderr)
     sys.exit(3)
 for o in outside:
-    print(f"warning: a tool call reached outside the run directory: {o}", file=sys.stderr)
+    print(f"FAIL: a tool call reached outside the run directory: {o}", file=sys.stderr)
+if outside:
+    sys.exit(4)
 PY
 
 status=0
 python3 "$E/score.py" "$out/report.md" > "$out/score.txt" || status=$?
 tail -3 "$out/score.txt"
+if [ "${claude_status:-0}" -ne 0 ]; then
+  echo "claude exited $claude_status" | tee -a "$out/stderr.log"
+  status=1
+fi
 echo "output: $out"
 exit "$status"
