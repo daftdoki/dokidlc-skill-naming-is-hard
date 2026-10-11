@@ -16,4 +16,5 @@ fixture unchanged.
 10/10, good 1/10 in each). Without it: bad 6/10, good 1/10, 6 first
 cells not bare, no offer: fail.
 
-Rerun at 0e392b9 on 2026-10-10 by the implementation review: every fixture passes again.
+Rerun at 0e392b9 on 2026-10-10 by the implementation review: every
+fixture passes again.

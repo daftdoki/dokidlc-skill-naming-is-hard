@@ -18,4 +18,5 @@ each). Without it: lay bad 8/10, good 1/10, 4 first cells not bare, no
 offer, no audience: fail; expert bad 7/10, good 7/10, 7 first cells not
 bare, no offer, no audience: fail.
 
-Rerun at 0e392b9 on 2026-10-10 by the implementation review: every fixture passes again.
+Rerun at 0e392b9 on 2026-10-10 by the implementation review: every
+fixture passes again.

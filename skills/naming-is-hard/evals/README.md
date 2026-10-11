@@ -42,7 +42,8 @@ In the existing-terms new runs 1 and 2, the threshold commands became `show-dist
 and its family. The judge rejected that family 0 of 3 times each,
 which costs three to four items at once.
 
-The audience-over-config row uses the rule at 892806b. Runs 1 and 6 kept "recall" across the
+The audience-over-config row uses the rule at 892806b. Runs 1 and 6
+kept "recall" across the
 threshold and tuning commands, citing the user docs, which say "recall
 distances"; run 4 used `max-distances`. The judge rejected each family
 0 of 3 times.
