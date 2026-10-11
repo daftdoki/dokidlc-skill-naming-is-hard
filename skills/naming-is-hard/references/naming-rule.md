@@ -15,6 +15,15 @@ every new name uses it, with its spelling. A term that fails is renamed
 first, everywhere at once, in every name and every document, and the
 new names are built from its replacement.
 
+When the project's term and the audience disagree, the audience wins
+for every name a person types or reads: a command, a setting, a flag,
+screen text. That name follows the audience line in The words and the
+word the interface shows, not the term in the config or the code. The
+internal term stays right for the internal thing it names, such as a
+config key or an identifier. `bak`'s config stores the retention period
+as `ttl_seconds`; the setting a person types is `retention-days`, and
+the config key keeps its name.
+
 `bak` used "archive" as a verb (`bak archive FILES`) and as the name of
 its cold-storage tier. One word in two roles fails, so the tier became
 `cold-storage` everywhere before any command was named. Then the
