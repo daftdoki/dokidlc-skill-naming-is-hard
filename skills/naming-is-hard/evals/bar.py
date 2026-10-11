@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 """Check the rename eval's bar over several runs.
 
-    bar.py OUT_DIR...
+    bar.py OUT_DIR... (six with-skill runs)
 
 Reads each run's score.txt and prints every run's acceptable and exact
-counts, then the means. Exit 1 when the mean acceptable is under 14 of
-17 or any run failed its format check.
+counts, then the means. Exit 1 when fewer than six runs are given, the
+mean acceptable is under 14 of 17, or any run failed its format check.
 """
 import re
 import sys
 from pathlib import Path
 
 BAR = 14
+RUNS = 6
 acc, exact, fmt_ok = [], [], True
-if not sys.argv[1:]:
-    sys.exit("usage: bar.py OUT_DIR...")
+if len(sys.argv) - 1 < RUNS:
+    sys.exit(f"usage: bar.py OUT_DIR... ({RUNS} runs, got {len(sys.argv) - 1})")
 for d in sys.argv[1:]:
     path = Path(d) / "score.txt"
     text = path.read_text() if path.is_file() else ""

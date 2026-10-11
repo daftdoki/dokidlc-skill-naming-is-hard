@@ -2,7 +2,7 @@
 # One headless rename run, scored against the creator's iirc decisions.
 # Exits non-zero when claude fails, a tool call reaches outside the run
 # directory, the format check fails, or the run has fewer than 14
-# acceptable names; bar.py checks the mean over three runs.
+# acceptable names; bar.py checks the mean over six runs.
 #   run.sh with_skill|without_skill [OUT_DIR]
 # Exports dokidlc-iirc at 1c4bd16 into a temporary directory and runs
 # one claude -p session there on task.md. Both arms use
