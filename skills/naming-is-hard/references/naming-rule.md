@@ -24,6 +24,14 @@ config key or an identifier. `bak`'s config stores the retention period
 as `ttl_seconds`; the setting a person types is `retention-days`, and
 the config key keeps its name.
 
+Documentation describes the current names and changes with them, so it
+carries no vote. When the docs and the screen use different words, the
+screen is the evidence of what people already know: the output and
+interface they meet while they use the tool. The docs follow the
+decision. `bak`'s manual says "retention policy", while every screen and
+message says "keep for N days", so the setting is `keep-days` and the
+manual is rewritten to match.
+
 `bak` used "archive" as a verb (`bak archive FILES`) and as the name of
 its cold-storage tier. One word in two roles fails, so the tier became
 `cold-storage` everywhere before any command was named. Then the
