@@ -34,6 +34,7 @@ claude-opus-5-5.
 | Skill, existing terms first, earlier runs 1 to 3, rescored | 14, 15, 15 | 8, 9, 11 |
 | Skill, existing terms first, new runs 1 to 3 | 11, 11, 14 (mean 12.0, bar not met) | 10, 9, 9 |
 | Skill, audience over config, runs 1 to 6 | 8, 14, 15, 10, 13, 11 (mean 11.8, bar not met) | 8, 12, 11, 9, 7, 9 |
+| Skill, documentation carries no vote, runs 1 to 6 | 14, 15, 14, 11, 15, 13 (mean 13.7, bar not met) | 9, 13, 9, 7, 12, 11 |
 
 In the existing-terms new runs 1 and 2, the threshold commands became `show-distance-limits`
 and its family. The judge rejected that family 0 of 3 times each,
@@ -44,6 +45,10 @@ audience, not the config". Runs 1 and 6 kept "recall" across the
 threshold and tuning commands, citing the user docs, which say "recall
 distances"; run 4 used `max-distances`. The judge rejected each family
 0 of 3 times.
+
+After "Documentation carries no vote", no run used "recall". Runs 4 and
+6 still built the threshold commands on "distance" (`distance-limits`,
+`max-distances`), and the judge rejected those families.
 
 ## Trigger eval
 
