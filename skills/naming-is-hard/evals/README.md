@@ -9,33 +9,34 @@ defaults to `claude-opus-5-5`.
 
 `score.py` grades the report two ways. Exact: the name equals the
 creator's name in `answer-key.md`. Acceptable: an exact match, or a name
-that a judge (`claude -p --model claude-fable-5-1`) says passes the
+that at least two of three judge calls (`claude -p --model
+claude-fable-5-1`) accept. A call accepts a name when it passes the
 rule's four Done when checks and reads to a newcomer the same way as the
-creator's name. The judge gets `naming-rule.md`, `items.json` (what
-each item does), the creator's name, and the proposed name, and never
-the run or arm. A New cell that is not one bare name fails the run.
-`run.sh` exits non-zero on a format failure or a run under 14
+creator's name. The judge gets `naming-rule.md`, `items.json` (what each
+item does), the creator's name, and the proposed name, and never the run
+or arm. A judge failure exits 3 with no score. A New cell that is not one
+bare name fails the run. `run.sh` exits non-zero on a claude failure, a
+read outside the run directory, a format failure, or a run under 14
 acceptable; `bar.py OUT_DIR...` checks the mean.
 
 Bar: with the skill, a mean of at least 14 of 17 acceptable over three
 runs. Exact matches are reported beside it.
 
-Scores, acceptable / exact, all rescored on 2026-10-10 by the same judge
-against the rule as of "Existing terms are checked first":
+Scores, acceptable / exact, scored on 2026-10-10 by the voting judge
+against the rule as of "Existing terms are checked first". Runs used
+claude-opus-5-5.
 
 | Run | Acceptable | Exact |
 |---|---|---|
 | Creator's run 0, no rule | 1 | 0 (format fail) |
-| Creator's run 1, first draft (16 items) | 11 | 8 |
+| Creator's run 1, first draft (16 items) | 10 | 8 |
 | Creator's run 2, second draft | 15 | 9 |
-| Skill, first build, runs 1 to 3 | 10, 10, 15 | 9, 8, 13 |
-| Skill, after the rule moved, runs 1 to 3 | 8, 11, 13 | 7, 9, 12 |
-| Skill, existing terms first, runs 1 to 3 | 14, 14, 14 (mean 14.0, bar met) | 8, 9, 11 |
-| Without the skill, existing terms first | 1 | 0 |
+| Skill, existing terms first, earlier runs 1 to 3, rescored | 14, 15, 15 | 8, 9, 11 |
+| Skill, existing terms first, new runs 1 to 3 | 11, 11, 14 (mean 12.0, bar not met) | 10, 9, 9 |
 
-The runs used claude-opus-5-5. The judge varies between calls: it
-accepted `session-line-visibility` in one call and rejected it in
-another.
+In new runs 1 and 2 the threshold commands became `show-distance-limits`
+and its family. The judge rejected that family 0 of 3 times each,
+which costs three to four items at once.
 
 ## Trigger eval
 
