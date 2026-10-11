@@ -23,8 +23,10 @@ Bar: with the skill, a mean of at least 13 of 17 acceptable over six
 runs. Exact matches are reported beside it.
 
 Scores, acceptable / exact, scored on 2026-10-10 by the voting judge.
-Each row names the rule it ran against by the commit that last changed
-it. Runs used claude-opus-5-5.
+Runs used claude-opus-5-5. The rows ran against the rule as it stood:
+the documentation row at 0e1821d (the shipped rule), the
+audience-over-config row at 892806b, the existing-terms rows at
+2b527cf, and earlier rows before it.
 
 | Run | Acceptable | Exact |
 |---|---|---|
