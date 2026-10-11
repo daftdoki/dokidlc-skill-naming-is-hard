@@ -84,8 +84,8 @@ def parse_answer(text, wanted):
     fenced = re.search(r"```(?:json)?\s*\n(.*?)```", text, re.S)
     if fenced:
         body = fenced.group(1)
-    elif "[{" in text:
-        body = text[text.index("[{"):]
+    elif re.search(r"\[\s*\{", text):
+        body = text[re.search(r"\[\s*\{", text).start():]
     else:
         raise JudgeError("no JSON array in the reply")
     try:
@@ -120,7 +120,10 @@ def ask_judge(prompt, wanted):
         raise JudgeError(f"claude gave no JSON ({err}); stderr: {run.stderr[-300:]}")
     if run.returncode != 0 or result.get("is_error"):
         raise JudgeError(f"claude failed ({run.returncode}): {text[:300]}")
-    return parse_answer(text, wanted)
+    try:
+        return parse_answer(text, wanted)
+    except JudgeError as err:
+        raise JudgeError(f"{err}; reply starts {text[:200]!r}")
 
 
 def judge(asks, all_names):
